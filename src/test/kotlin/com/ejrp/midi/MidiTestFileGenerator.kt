@@ -5,7 +5,6 @@ import com.ejrp.midi.events.*
 import com.ejrp.midi.utils.VariableLengthQuantity
 import com.ejrp.midi.utils.toByteArray
 
-
 private fun format0MidiSequence(events: List<MidiTrackEvent>) = MidiSequence(listOf(TrackChunk(events)))
 
 private val basicFormat0HeaderChunkBytes = MThd_MAGIC.toByteArray() // chunk type
@@ -1064,7 +1063,6 @@ private val invalidEndingInMultiPacketSysexEvent = InvalidMidiTestFile(
     SystemExclusiveFormatF0IncorrectEnding(),
     "Invalid ending in multi-packet sysex event"
 )
-
 
 val invalidTestFiles = listOf(
     emptyFile,
