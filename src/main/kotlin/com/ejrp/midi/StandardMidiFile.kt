@@ -8,7 +8,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 /**
- * A class that represents a type 0 or type 1 midi file
+ * A class that represents a standard midi file
  * @property headerChunk The header chunk of this midi file
  * @property midiSequence Data class that contains all the track chunks of the midi file
  * @constructor Create a Midi file with the provided header chunk and midi sequence
@@ -16,6 +16,13 @@ import java.io.OutputStream
  */
 data class StandardMidiFile(val headerChunk: HeaderChunk, val midiSequence: MidiSequence) : Serialize {
 
+    /**
+     * Returns the expanded string representation of this standard midi file.
+     * This string representation includes more detailed information of the header chunk
+     * and all midi events in the file listed in order.
+     *
+     * @return The expanded string representation of this standard midi file
+     */
     fun expandedStringRepresentation(): String {
         val builder = StringBuilder()
         builder.append("Maximum file size: ${maximumFileSize()} bytes\n")

@@ -10,6 +10,17 @@ import com.ejrp.midi.utils.*
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * A meta event are usually events which are not related the playing
+ * of the midi file, although some events like set tempo and end of track
+ * has an effect on playback.
+ *
+ * @property type The type of the meta-event
+ * @property length The number of bytes associated with the data of the event
+ * @constructor Create a meta event with the specified delta-time, type and length
+ *
+ * @param deltaTime The delta-time associated with the event
+ */
 abstract class MetaEvent(deltaTime: VariableLengthQuantity, val type: Byte, val length: VariableLengthQuantity) :
     MidiTrackEvent(deltaTime) {
     val status = META_EVENT_STATUS_BYTE.toByte()

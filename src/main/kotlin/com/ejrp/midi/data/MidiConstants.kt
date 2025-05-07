@@ -4,6 +4,13 @@ import com.ejrp.midi.InvalidMidiDataByte
 import com.ejrp.midi.utils.getBit
 import com.ejrp.midi.utils.shl
 
+/**
+ * A midi data byte is a byte with the most significant bits not set. This is used for transferring data in
+ * midi channel message.
+ *
+ * @property data The data associated to this midi data byte
+ * @constructor Create a midi data byte with the specified data byte
+ */
 data class MidiDataByte(val data: Byte) {
     init {
         if (data.getBit(7)) throw InvalidMidiDataByte("midi data byte", data)
@@ -180,7 +187,7 @@ enum class MetaEventsType(val type: Int) {
     fun toClassName() = name.substringBefore("_").cap() + name.substringAfter("_", "").cap()
 }
 
-fun String.cap(): String {
+private fun String.cap(): String {
     if (this.isBlank()) return this
     return first().uppercase() + substring(1).lowercase()
 }

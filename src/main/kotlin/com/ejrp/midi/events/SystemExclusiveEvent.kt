@@ -5,6 +5,13 @@ import com.ejrp.midi.utils.*
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * A system exclusive message only has two valid format: F0 or F7.
+ * The format of a SysEx message simply means the starting byte of the message.
+ *
+ * @property byte The byte associated to the format
+ * @constructor Create a system exclusive format with the specified byte
+ */
 enum class SystemExclusiveFormat(val byte: Byte) : Serialize {
     F0_FORMAT(0xF0.toByte()),
     F7_FORMAT(0xF7.toByte());
@@ -15,6 +22,15 @@ enum class SystemExclusiveFormat(val byte: Byte) : Serialize {
     val status: UInt = byte.toUByte().toUInt()
 }
 
+/**
+ * A system exclusive event in a track chunk.
+ *
+ * @property messageFormat The format of the SysEx event
+ * @property data The data associated to the event
+ * @constructor Creates a SysEx event with the specified delta-time, format and data
+ *
+ * @param deltaTime The delta-time associated to the event
+ */
 class SystemExclusiveEvent(
     deltaTime: VariableLengthQuantity,
     val messageFormat: SystemExclusiveFormat,

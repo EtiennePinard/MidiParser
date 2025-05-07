@@ -36,6 +36,12 @@ class VariableLengthQuantity(val quantity: UInt) : Serialize, Comparable<Variabl
         return stream
     }
 
+    /**
+     * Returns the length, that is the number of bytes used to write this
+     * variable length quantity. This is a value from 1 to 4.
+     *
+     * @return The length of this variable length quantity.
+     */
     fun length(): Int {
         return 4 - (quantity.countLeadingZeroBits() - 4) / 7 + (quantity.isZero().toInt())
     }

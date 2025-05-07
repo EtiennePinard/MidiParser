@@ -7,10 +7,28 @@ import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 
+/**
+ * Represents a midi chunk
+ *
+ * @property type A 4 byte value which is valid ascii
+ * @property length A 4 byte value which says how many data bytes this chunk contains
+ * @constructor Create a Midi chunk from the type and the length
+ */
 open class MidiChunk(val type: UInt, val length: UInt) : Serialize {
 
+    /**
+     * Computes the total size of the chunk
+     *
+     * @return The total size of this chunk
+     */
     fun totalChunkSize() = CHUNK_METADATA_LENGTH + length
 
+    /**
+     * Writes the type and the length, i.e. the metadata of this chunk, to an output stream
+     *
+     * @param stream The stream to write the chunk's metadata to
+     * @return The stream that was written to
+     */
     override fun toOutputStream(stream: OutputStream): OutputStream {
         // Writing the type and the length
         stream.write(type.toByteArray())
@@ -53,6 +71,14 @@ open class MidiChunk(val type: UInt, val length: UInt) : Serialize {
     }
 }
 
+/**
+ * Represents a midi header chunk. Every midi file needs to start with a header chunk
+ *
+ * @property format The format of this midi file
+ * @property numberOfTrackChunks The number of track chunks in this midi file
+ * @property midiDivision The division of this midi file which has instructions on how to convert midi ticks to seconds
+ * @constructor Create a header chunk with the specified format, number of tracks chunks and division
+ */
 data class HeaderChunk(val format: UShort, val numberOfTrackChunks: UShort, val midiDivision: MidiDivision) :
     MidiChunk(MThd_MAGIC, HEADER_CHUNK_LENGTH) {
 
@@ -106,6 +132,12 @@ data class HeaderChunk(val format: UShort, val numberOfTrackChunks: UShort, val 
     }
 }
 
+/**
+ * Represents a midi track chunk. Every midi file needs at least one track chunk
+ *
+ * @property events The list of midi tracks events in this track chunk
+ * @constructor Create a track chunk with the specified events
+ */
 data class TrackChunk(val events: List<MidiTrackEvent>) :
     MidiChunk(MTrk_MAGIC, events.sumOf { it.totalSize() }) {
 
@@ -168,7 +200,6 @@ data class TrackChunk(val events: List<MidiTrackEvent>) :
                 64                              100-tick delta-time
                 F7 04 43 12 00 F7               The last sysex end with F7
             */
-            // TODO: Add the check with this sysex event
             var startedSysexWithF0 = false
             var correctlyEndedTheSysexEvent = true
 
@@ -283,6 +314,16 @@ interface DeserializeMidiSequence {
     fun fromInputStream(serialized: InputStream, numberOfTracks: Int): MidiSequence
 }
 
+/**
+ * A midi sequence is a construct from this library which is simply a list of track chunks.
+ * This class is essentially a wrapper around a list of track chunks although it provides the
+ * toOutputStream and fromInputStream method to serialize and deserialize the tracks chunks in
+ * midi files.
+ *
+ * @property tracks The track chunks in the midi file
+ *
+ * @constructor Create a midi sequence with the specified track chunks
+ */
 data class MidiSequence(val tracks: List<TrackChunk>) : Serialize {
     override fun toOutputStream(stream: OutputStream): OutputStream {
         tracks.forEach { it.toOutputStream(stream) }

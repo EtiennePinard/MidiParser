@@ -7,6 +7,10 @@ import java.io.InputStream
 import java.io.OutputStream
 import kotlin.jvm.Throws
 
+/**
+ * This interface is mainly used for the fromInputStream from its companion object and assuring that
+ * every midi division implements the Serialize interface.
+ */
 interface MidiDivision : Serialize {
 
     companion object : DeserializeStream<MidiDivision> {
@@ -21,6 +25,13 @@ interface MidiDivision : Serialize {
     }
 }
 
+/**
+ * The ticks per quarter note division tells how many midi ticks are in a quarter note.
+ * More ticks means more precision for midi events. A standard value for this is 96 (0x60).
+ *
+ * @property tickPerQuarterNote The number of midi ticks per quarter note
+ * @constructor Create a ticks per quarter note division with the specified ticks per quarter note
+ */
 data class TicksPerQuarterNoteDivision(val tickPerQuarterNote: UShort) : MidiDivision {
     override fun toOutputStream(stream: OutputStream): OutputStream {
         stream.write(tickPerQuarterNote.toByteArray())
@@ -33,6 +44,14 @@ data class TicksPerQuarterNoteDivision(val tickPerQuarterNote: UShort) : MidiDiv
     }
 }
 
+/**
+ * The SMPTE division is rarer to see in midi files. It specifies the number of frames per second
+ * and the number of sub frames per frame.
+ *
+ * @property framesPerSecond The number of frames per second
+ * @property subFramesPerFrame The number of sub frame per frame
+ * @constructor Create a SMPTE division with the specified frames per second and sub frames per frame
+ */
 data class SMPTEDivision(val framesPerSecond: Byte, val subFramesPerFrame: Byte) : MidiDivision {
 
     override fun toOutputStream(stream: OutputStream) = stream.write(framesPerSecond).write(subFramesPerFrame)

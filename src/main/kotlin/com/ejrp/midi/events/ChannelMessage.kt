@@ -50,6 +50,16 @@ interface SerializeChannelMessage {
     fun toOutputStream(stream: OutputStream, writeStatusByte: Boolean): OutputStream
 }
 
+/**
+ * A channel message is an event which will target a specific
+ * midi channel. You can use running status to avoid writing the
+ * same status byte of midi channel events in a row
+ *
+ * @property status The status byte of the channel message
+ * @constructor Create a channel message with the specified delta-time and status byte
+ *
+ * @param deltaTime The delta-time associated with the channel message
+ */
 abstract class ChannelMessage(deltaTime: VariableLengthQuantity, val status: Byte) : MidiTrackEvent(deltaTime),
     SerializeChannelMessage {
     val type = status shr 4
